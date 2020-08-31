@@ -52,6 +52,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 
 import com.sun.tools.doclint.DocLint;
+import com.sun.tools.javac.api.JANOption;
+import com.sun.tools.javac.api.JANOptions;
 import com.sun.tools.javac.code.Lint.LintCategory;
 import com.sun.tools.javac.code.Source;
 import com.sun.tools.javac.file.BaseFileManager;
@@ -355,10 +357,39 @@ public class Arguments {
         return true;
     }
 
+    private static void handleJANOptions( Iterable<String> options )
+    {
+        Iterator<String> iter = options.iterator();
+        while ( iter.hasNext() )
+        {
+            String clO = iter.next();
+            for ( JANOption janO : JANOptions.validOptions )
+            {
+                if ( clO.equalsIgnoreCase(janO.name()) )
+                {
+                    String mapName = janO.name().replace('-',' ').trim();
+                    iter.remove();
+                    if ( ! janO.hasArgs() )
+                    {
+                        JANOptions.set(mapName, "true");
+                    }
+                    else
+                    {
+                        JANOptions.set(mapName, iter.next());
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+
     private boolean doProcessArgs(Iterable<String> args,
             Set<Option> allowableOpts, OptionHelper helper,
             boolean allowOperands, boolean checkFileManager) {
         JavaFileManager fm = checkFileManager ? getFileManager() : null;
+
+        handleJANOptions( args ); // FIXME COLUMBUS HACK
+
         Iterator<String> argIter = args.iterator();
         while (argIter.hasNext()) {
             String arg = argIter.next();

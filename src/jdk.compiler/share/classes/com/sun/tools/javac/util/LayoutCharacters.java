@@ -37,7 +37,7 @@ public interface LayoutCharacters {
 
     /** Tabulator column increment.
      */
-    final static int TabInc = 8;
+    final static int TabInc = com.sun.tools.javac.api.JANOptions.getInt("JAN_tabinc");
 
     /** Standard indentation for subdiagnostics
      */

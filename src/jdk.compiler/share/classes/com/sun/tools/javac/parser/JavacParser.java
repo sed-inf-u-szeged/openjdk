@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import com.sun.source.tree.MemberReferenceTree.ReferenceMode;
 import com.sun.source.tree.ModuleTree.ModuleKind;
 
+import com.sun.tools.javac.api.JANOptions;
 import com.sun.tools.javac.code.*;
 import com.sun.tools.javac.code.Source.Feature;
 import com.sun.tools.javac.parser.Tokens.*;
@@ -173,7 +174,8 @@ public class JavacParser implements Parser {
         this.names = fac.names;
         this.source = fac.source;
         this.preview = fac.preview;
-        this.allowStringFolding = fac.options.getBoolean("allowStringFolding", true);
+        //this.allowStringFolding = fac.options.getBoolean("allowStringFolding", true);
+        this.allowStringFolding = JANOptions.getBool("JAN_string_folding");
         this.keepDocComments = keepDocComments;
         this.parseModuleInfo = parseModuleInfo;
         docComments = newDocCommentTable(keepDocComments, fac);
