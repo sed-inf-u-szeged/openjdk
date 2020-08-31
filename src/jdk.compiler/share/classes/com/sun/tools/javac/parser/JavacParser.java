@@ -613,12 +613,20 @@ public class JavacParser implements Parser {
      */
     JCExpression literal(Name prefix, int pos) {
         JCExpression t = errorTree;
+    	
+    	String formatPrefix = "";
+    	if (token instanceof NumericToken && token.radix() == 10 && prefix == names.hyphen){
+    		formatPrefix = "-";
+    	}
+    	
         switch (token.kind) {
         case INTLITERAL:
             try {
                 t = F.at(pos).Literal(
                     TypeTag.INT,
-                    Convert.string2int(strval(prefix), token.radix()));
+                    Convert.string2int(strval(prefix), token.radix()),
+                    formatPrefix + S.rawToken()
+                );
             } catch (NumberFormatException ex) {
                 log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.IntNumberTooLarge(strval(prefix)));
             }
@@ -627,7 +635,9 @@ public class JavacParser implements Parser {
             try {
                 t = F.at(pos).Literal(
                     TypeTag.LONG,
-                    Long.valueOf(Convert.string2long(strval(prefix), token.radix())));
+                    Long.valueOf(Convert.string2long(strval(prefix), token.radix())),
+                    formatPrefix + S.rawToken()
+                );
             } catch (NumberFormatException ex) {
                 log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.IntNumberTooLarge(strval(prefix)));
             }
@@ -648,7 +658,7 @@ public class JavacParser implements Parser {
             else if (n.floatValue() == Float.POSITIVE_INFINITY)
                 log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.FpNumberTooLarge);
             else
-                t = F.at(pos).Literal(TypeTag.FLOAT, n);
+                t = F.at(pos).Literal(TypeTag.FLOAT, n, S.rawToken());
             break;
         }
         case DOUBLELITERAL: {
@@ -667,28 +677,36 @@ public class JavacParser implements Parser {
             else if (n.doubleValue() == Double.POSITIVE_INFINITY)
                 log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.FpNumberTooLarge);
             else
-                t = F.at(pos).Literal(TypeTag.DOUBLE, n);
+                t = F.at(pos).Literal(TypeTag.DOUBLE, n, S.rawToken());
             break;
         }
         case CHARLITERAL:
             t = F.at(pos).Literal(
                 TypeTag.CHAR,
-                token.stringVal().charAt(0) + 0);
+                token.stringVal().charAt(0) + 0,
+                S.rawToken()
+            );
             break;
         case STRINGLITERAL:
             t = F.at(pos).Literal(
                 TypeTag.CLASS,
-                token.stringVal());
+                token.stringVal(),
+                S.rawToken()
+            );
             break;
         case TRUE: case FALSE:
             t = F.at(pos).Literal(
                 TypeTag.BOOLEAN,
-                (token.kind == TRUE ? 1 : 0));
+                (token.kind == TRUE ? 1 : 0),
+                S.rawToken()
+            );
             break;
         case NULL:
             t = F.at(pos).Literal(
                 TypeTag.BOT,
-                null);
+                null,
+                S.rawToken()
+            );
             break;
         default:
             Assert.error();

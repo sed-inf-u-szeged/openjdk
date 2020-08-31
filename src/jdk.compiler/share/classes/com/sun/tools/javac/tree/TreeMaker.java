@@ -459,8 +459,14 @@ public class TreeMaker implements JCTree.Factory {
         return tree;
     }
 
+    public JCLiteral Literal(TypeTag tag, Object value, String format) {
+        JCLiteral tree = new JCLiteral(tag, value, format);
+        tree.pos = pos;
+        return tree;
+    }
+
     public JCLiteral Literal(TypeTag tag, Object value) {
-        JCLiteral tree = new JCLiteral(tag, value);
+        JCLiteral tree = new JCLiteral(tag, value, "");
         tree.pos = pos;
         return tree;
     }
@@ -825,35 +831,39 @@ public class TreeMaker implements JCTree.Factory {
     }
 
     public JCLiteral Literal(Object value) {
+    	return Literal2( value, "" );
+    }
+
+    private JCLiteral Literal2(Object value, String format) {
         JCLiteral result = null;
         if (value instanceof String) {
-            result = Literal(CLASS, value).
+            result = Literal(CLASS, value, format).
                 setType(syms.stringType.constType(value));
         } else if (value instanceof Integer) {
-            result = Literal(INT, value).
+            result = Literal(INT, value, format).
                 setType(syms.intType.constType(value));
         } else if (value instanceof Long) {
-            result = Literal(LONG, value).
+            result = Literal(LONG, value, format).
                 setType(syms.longType.constType(value));
         } else if (value instanceof Byte) {
-            result = Literal(BYTE, value).
+            result = Literal(BYTE, value, format).
                 setType(syms.byteType.constType(value));
         } else if (value instanceof Character) {
             int v = (int) (((Character) value).toString().charAt(0));
-            result = Literal(CHAR, v).
+            result = Literal(CHAR, v, format).
                 setType(syms.charType.constType(v));
         } else if (value instanceof Double) {
-            result = Literal(DOUBLE, value).
+            result = Literal(DOUBLE, value, format).
                 setType(syms.doubleType.constType(value));
         } else if (value instanceof Float) {
-            result = Literal(FLOAT, value).
+            result = Literal(FLOAT, value, format).
                 setType(syms.floatType.constType(value));
         } else if (value instanceof Short) {
-            result = Literal(SHORT, value).
+            result = Literal(SHORT, value, format).
                 setType(syms.shortType.constType(value));
         } else if (value instanceof Boolean) {
             int v = ((Boolean) value) ? 1 : 0;
-            result = Literal(BOOLEAN, v).
+            result = Literal(BOOLEAN, v, format).
                 setType(syms.booleanType.constType(v));
         } else {
             throw new AssertionError(value);
@@ -864,7 +874,8 @@ public class TreeMaker implements JCTree.Factory {
     class AnnotationBuilder implements Attribute.Visitor {
         JCExpression result = null;
         public void visitConstant(Attribute.Constant v) {
-            result = Literal(v.type.getTag(), v.value);
+            // TODO
+            result = Literal(v.type.getTag(), v.value, v.value.toString());
         }
         public void visitClass(Attribute.Class clazz) {
             result = ClassLiteral(clazz.classType).setType(syms.classType);

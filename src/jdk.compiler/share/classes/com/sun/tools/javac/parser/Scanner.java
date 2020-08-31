@@ -50,6 +50,10 @@ public class Scanner implements Lexer {
      */
     private Token token;
 
+    /** The raw text of the token
+     */
+    private String rawToken;
+
     /** The previous token, set by nextToken().
      */
     private Token prevToken;
@@ -114,6 +118,17 @@ public class Scanner implements Lexer {
         } else {
             token = tokenizer.readToken();
         }
+        if (token.endPos > token.pos) { // FIXME COLUMBUS HACK
+            rawToken = new String(tokenizer.getReader().getRawCharacters(token.pos, token.endPos));
+        } else {
+            rawToken = "";
+        }
+    }
+
+    /** Return the current raw token
+     */
+    public String rawToken() {
+        return rawToken;
     }
 
     public Token split() {

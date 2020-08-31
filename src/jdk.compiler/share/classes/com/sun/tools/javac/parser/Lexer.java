@@ -50,6 +50,11 @@ public interface Lexer {
     Token token();
 
     /**
+     * Return the current raw token, set by nextToken().
+     */
+    String rawToken();
+
+    /**
      * Return token with given lookahead.
      */
     Token token(int lookahead);

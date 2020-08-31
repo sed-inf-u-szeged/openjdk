@@ -266,7 +266,7 @@ public class TreeCopier<P> implements TreeVisitor<JCTree,P> {
     @DefinedBy(Api.COMPILER_TREE)
     public JCTree visitLiteral(LiteralTree node, P p) {
         JCLiteral t = (JCLiteral) node;
-        return M.at(t.pos).Literal(t.typetag, t.value);
+        return M.at(t.pos).Literal(t.typetag, t.value, t.format);
     }
 
     @DefinedBy(Api.COMPILER_TREE)

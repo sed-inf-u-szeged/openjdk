@@ -2263,12 +2263,19 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         public TypeTag typetag;
         /** value representation */
         public Object value;
-        protected JCLiteral(TypeTag typetag, Object value) {
+        public String format;
+        protected JCLiteral(TypeTag typetag, Object value, String format) {
             this.typetag = typetag;
             this.value = value;
+            this.format = format;
         }
         @Override
         public void accept(Visitor v) { v.visitLiteral(this); }
+        
+        public String getFormat()
+        {
+        	return format;
+        }
 
         @DefinedBy(Api.COMPILER_TREE)
         public Kind getKind() {
