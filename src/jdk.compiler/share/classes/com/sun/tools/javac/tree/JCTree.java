@@ -38,6 +38,7 @@ import com.sun.tools.javac.code.*;
 import com.sun.tools.javac.code.Directive.RequiresDirective;
 import com.sun.tools.javac.code.Scope.*;
 import com.sun.tools.javac.code.Symbol.*;
+import com.sun.tools.javac.parser.Tokens.TokenKind;
 import com.sun.tools.javac.util.*;
 import com.sun.tools.javac.util.DefinedBy.Api;
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticPosition;
@@ -522,6 +523,8 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         /* An object encapsulating ending positions of source ranges indexed by
          * the tree nodes they belong to. Defined only if option -Xjcov is set. */
         public EndPosTable endPositions = null;
+        // other positions
+        public Map<JCTree, Map<TokenKind, Set<Integer>>> otherPositions = null;
         protected JCCompilationUnit(List<JCTree> defs) {
             this.defs = defs;
         }
