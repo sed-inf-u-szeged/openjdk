@@ -1,0 +1,15 @@
+apply plugin: 'java'
+defaultTasks 'jar'
+
+buildDir = file(buildDir.getPath() + "/openjdk")
+
+task buildLangtools(type: Exec) {
+	commandLine 'ant', '-f', 'make/langtools/build.xml', '-Djdk.home=' + System.properties['java.home'], '-Dmodule.names=java.compiler jdk.compiler'
+}
+
+jar {
+	baseName = 'jdk.compiler'
+	from 'build/langtools/modules/jdk.compiler'
+}
+
+jar.dependsOn buildLangtools
