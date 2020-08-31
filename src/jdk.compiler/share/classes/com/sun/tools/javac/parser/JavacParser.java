@@ -3309,6 +3309,11 @@ public class JavacParser implements Parser {
             toplevel.lineMap = S.getLineMap();
         this.endPosTable.setParser(null); // remove reference to parser
         toplevel.endPositions = this.endPosTable;
+
+        // FIXME COLUMBUS HACK BEGIN
+        storeEnd(toplevel, token.pos);
+        // COLUMBUS HACK END
+
         return toplevel;
     }
 

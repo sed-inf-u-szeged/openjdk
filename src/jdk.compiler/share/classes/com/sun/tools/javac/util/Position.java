@@ -153,7 +153,8 @@ public class Position {
         protected void build(char[] src, int max) {
             int c = 0;
             int i = 0;
-            int[] linebuf = new int[max];
+//            int[] linebuf = new int[max];
+            int[] linebuf = new int[max+1];
             while (i < max) {
                 linebuf[c++] = i;
                 do {
@@ -169,8 +170,19 @@ public class Position {
                         setTabPosition(i);
                 } while (++i < max);
             }
-            this.startPosition = new int[c];
-            System.arraycopy(linebuf, 0, startPosition, 0, c);
+            // FIXME COLUMBUS HACK BEGIN
+            if (i != 0) {
+                if (src[i-1] == '\r' || src[i-1] == '\n') {
+                    linebuf[c++] = i;
+                }
+            }
+            if (c == 0) {
+                this.startPosition = new int[]{0};
+            } else {
+                this.startPosition = new int[c];
+                System.arraycopy(linebuf, 0, startPosition, 0, c);
+            }
+            // COLUMBUS HACK END
         }
 
         public int getStartPosition(int line) {
