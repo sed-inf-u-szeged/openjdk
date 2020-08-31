@@ -815,12 +815,18 @@ public abstract class Symbol extends AnnoConstruct implements Element {
                 return list;
             }
             apiComplete();
-            for (Symbol sym : members().getSymbols(NON_RECURSIVE)) {
-                sym.apiComplete();
-                if ((sym.flags() & SYNTHETIC) == 0 && sym.owner == this && sym.kind != ERR) {
-                    list = list.prepend(sym);
+            // FIXME COLUMBUS HACK BEGIN
+            //for (Symbol sym : members().getSymbols(NON_RECURSIVE)) {
+            Scope m = members();
+            if (m != null) {
+                for (Symbol sym : m.getSymbols(NON_RECURSIVE)) {
+                    sym.apiComplete();
+                    if ((sym.flags() & SYNTHETIC) == 0 && sym.owner == this && sym.kind != ERR) {
+                        list = list.prepend(sym);
+                    }
                 }
             }
+            // COLUMBUS HACK END
             return list;
         }
 

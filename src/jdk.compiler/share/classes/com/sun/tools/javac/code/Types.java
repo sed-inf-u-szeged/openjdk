@@ -2915,7 +2915,11 @@ public class Types {
             if (e == null ||
                     !e.matches(implFilter, checkResult, members.getMark())) {
                 MethodSymbol impl = implementationInternal(ms, origin, checkResult, implFilter);
-                cache.put(origin, new Entry(impl, implFilter, checkResult, members.getMark()));
+                // FIXME COLUMBUS HACK BEGIN
+                if (members != null) {
+                    cache.put(origin, new Entry(impl, implFilter, checkResult, members.getMark()));
+                }
+                // COLUMBUS HACK END
                 return impl;
             }
             else {

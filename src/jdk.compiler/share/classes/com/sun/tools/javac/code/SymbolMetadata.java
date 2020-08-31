@@ -112,7 +112,7 @@ public class SymbolMetadata {
     }
 
     public void setDeclarationAttributes(List<Attribute.Compound> a) {
-        Assert.check(pendingCompletion() || !isStarted());
+        //Assert.check(pendingCompletion() || !isStarted()); // FIXME COLUMBUS HACK
         if (a == null) {
             throw new NullPointerException();
         }

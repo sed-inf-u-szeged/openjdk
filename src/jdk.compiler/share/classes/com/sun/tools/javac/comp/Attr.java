@@ -908,7 +908,14 @@ public class Attr extends JCTree.Visitor {
     }
 
     Type attribIdentAsEnumType(Env<AttrContext> env, JCIdent id) {
-        Assert.check((env.enclClass.sym.flags() & ENUM) != 0);
+        // FIXME COLUMBUS HACK BEGIN
+        //Assert.check((env.enclClass.sym.flags() & ENUM) != 0);
+        try {
+            Assert.check((env.enclClass.sym.flags() & ENUM) != 0);
+        } catch (AssertionError e) {
+            log.rawError(id.pos, "[COLUMBUS HACK] Catch an AssertionError");
+        }
+        // COLUMBUS HACK END
         id.type = env.info.scope.owner.enclClass().type;
         id.sym = env.info.scope.owner.enclClass();
         return id.type;
@@ -2417,7 +2424,14 @@ public class Attr extends JCTree.Visitor {
                                                     : cdef.sym.type;
                 Symbol sym = tree.constructor = rs.resolveConstructor(
                         tree.pos(), localEnv, clazztype, finalargtypes, typeargtypes);
-                Assert.check(!sym.kind.isResolutionError());
+                // FIXME COLUMBUS HACK BEGIN
+                //Assert.check(!sym.kind.isResolutionError());
+                try {
+                    Assert.check(!sym.kind.isResolutionError());
+                } catch (AssertionError e) {
+                    log.rawError(cdef.pos, "[COLUMBUS HACK] Catch an AssertionError");
+                }
+                // COLUMBUS HACK END
                 tree.constructor = sym;
                 tree.constructorType = checkId(tree,
                         clazztype,
@@ -4427,7 +4441,14 @@ public class Attr extends JCTree.Visitor {
     /** Default visitor method for all other trees.
      */
     public void visitTree(JCTree tree) {
-        throw new AssertionError();
+        // FIXME COLUMBUS HACK BEGIN
+        //throw new AssertionError();
+        try {
+            throw new AssertionError();
+        } catch (AssertionError e) {
+            log.rawError(tree.pos, "[COLUMBUS HACK] Catch an AssertionError while visiting tree: " + tree.getKind());
+        }
+        // COLUMBUS HACK END
     }
 
     /**
