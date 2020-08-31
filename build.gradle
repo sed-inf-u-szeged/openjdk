@@ -2,9 +2,10 @@ apply plugin: 'java'
 defaultTasks 'jar'
 
 buildDir = file(buildDir.getPath() + "/openjdk")
+ext.ant_script = org.gradle.internal.os.OperatingSystem.current().isWindows() ? 'ant.bat' : 'ant'
 
 task buildLangtools(type: Exec) {
-	commandLine 'ant', '-f', 'make/langtools/build.xml', '-Djdk.home=' + System.properties['java.home'], '-Dmodule.names=java.compiler jdk.compiler'
+	commandLine ant_script, '-f', 'make/langtools/build.xml', '-Djdk.home=' + System.properties['java.home'], '-Dmodule.names=java.compiler jdk.compiler'
 }
 
 jar {
