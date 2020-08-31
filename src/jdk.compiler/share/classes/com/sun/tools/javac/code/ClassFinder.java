@@ -50,6 +50,7 @@ import com.sun.tools.javac.code.Symbol.ModuleSymbol;
 import com.sun.tools.javac.code.Symbol.PackageSymbol;
 import com.sun.tools.javac.code.Symbol.TypeSymbol;
 import com.sun.tools.javac.comp.Annotate;
+import com.sun.tools.javac.comp.DuplicatedHack;
 import com.sun.tools.javac.file.JRTIndex;
 import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.jvm.ClassReader;
@@ -467,6 +468,7 @@ public class ClassFinder {
             : (ClassSymbol) p.members_field.findFirst(classname);
         if (c == null) {
             c = syms.enterClass(p.modle, classname, p);
+            DuplicatedHack.classesNotVisitedEarly.remove(c.flatname);
             if (c.classfile == null) // only update the file if's it's newly created
                 c.classfile = file;
             if (isPkgInfo) {

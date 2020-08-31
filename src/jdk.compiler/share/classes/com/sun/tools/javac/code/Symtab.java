@@ -52,6 +52,7 @@ import com.sun.tools.javac.code.Type.JCVoidType;
 import com.sun.tools.javac.code.Type.MethodType;
 import com.sun.tools.javac.code.Type.UnknownType;
 import com.sun.tools.javac.code.Types.UniqueType;
+import com.sun.tools.javac.comp.DuplicatedHack;
 import com.sun.tools.javac.comp.Modules;
 import com.sun.tools.javac.util.Assert;
 import com.sun.tools.javac.util.Context;
@@ -621,6 +622,16 @@ public class Symtab {
         return c;
     }
 
+    public ClassSymbol enterHackedIfDuplicated(ModuleSymbol msym, Name name, TypeSymbol owner) {
+        Name flatname = TypeSymbol.formFlatName(name, owner);
+        ClassSymbol c = DuplicatedHack.classesNotVisitedEarly.get(flatname);
+        if (c == null) {
+            return enterClass(msym, name, owner);
+        } else {
+            return enterClass_hacked(msym, name, owner);
+        }
+    }
+
     /** Create a new toplevel or member class symbol with given name
      *  and owner and enter in `classes' unless already there.
      */
@@ -631,6 +642,7 @@ public class Symtab {
         if (c == null) {
             c = defineClass(name, owner);
             doEnterClass(msym, c);
+            DuplicatedHack.classesNotVisitedEarly.put(flatname,c);
         } else if ((c.name != name || c.owner != owner) && owner.kind == TYP && c.owner.kind == PCK) {
             // reassign fields of classes that might have been loaded with
             // their flat names.
@@ -639,6 +651,29 @@ public class Symtab {
             c.owner = owner;
             c.fullname = ClassSymbol.formFullName(name, owner);
         }
+        return c;
+    }
+
+
+    public ClassSymbol enterClass_hacked(ModuleSymbol msym, Name name, TypeSymbol owner) {
+        final String duplicatedSign = "@DUP";
+        final String orig = name.toString();
+        final Name origFlatname = TypeSymbol.formFlatName(name, owner);
+        Name newFlatname = origFlatname;
+        
+        int i = 1;
+        newFlatname = names.fromString(origFlatname + duplicatedSign + i);
+        //if we search it in the classes, it find don't duplicated classes, because of cp or sp
+        while( DuplicatedHack.classesNotVisitedEarly.get(newFlatname) != null ) {
+            newFlatname  = names.fromString(origFlatname + duplicatedSign+ ++i);
+        }
+        DuplicatedHack.duplicatedTypeDeclarations.put(newFlatname, origFlatname);
+        name = names.fromString(name + duplicatedSign + i);
+        
+        ClassSymbol c = defineClass(name, owner);
+        c.name = names.fromString(orig);
+        doEnterClass(msym, c);
+        DuplicatedHack.classesNotVisitedEarly.put(newFlatname, c);
         return c;
     }
 
