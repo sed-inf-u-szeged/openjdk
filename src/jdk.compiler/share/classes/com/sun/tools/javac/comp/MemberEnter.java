@@ -259,13 +259,12 @@ public class MemberEnter extends JCTree.Visitor {
 
         try {
             // FIXME COLUMBUS HACK BEGIN
-            //if (TreeInfo.isEnumInit(tree)) {
-            if (TreeInfo.isEnumInit(tree) && tree.vartype instanceof JCIdent) {
-                attr.attribIdentAsEnumType(localEnv, (JCIdent)tree.vartype);
-            } else if (!tree.isImplicitlyTyped()) {
-                if (TreeInfo.isEnumInit(tree) && !(tree.vartype instanceof JCIdent)) {
+            if (TreeInfo.isEnumInit(tree)) {
+                if (tree.vartype instanceof JCIdent)
+                    attr.attribIdentAsEnumType(localEnv, (JCIdent)tree.vartype);
+                else
                     log.rawError(tree.pos, "[COLUMBUS HACK] Unexpected vartype member for JCVariableDecl node");
-                }
+            } else if (!tree.isImplicitlyTyped()) {
                 attr.attribType(tree.vartype, localEnv);
                 if (TreeInfo.isReceiverParam(tree))
                     checkReceiver(tree, localEnv);

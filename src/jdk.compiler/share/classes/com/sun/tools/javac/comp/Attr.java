@@ -2388,7 +2388,10 @@ public class Attr extends JCTree.Visitor {
                 // false for isInterface call even when the original type is an interface.
                 boolean implementing = clazztype.tsym.isInterface() ||
                         clazztype.isErroneous() && !clazztype.getOriginalType().hasTag(NONE) &&
-                        clazztype.getOriginalType().tsym.isInterface();
+                        // FIXME COLUMBUS HACK BEGIN
+                        //clazztype.getOriginalType().tsym.isInterface();
+                        clazztype.getOriginalType().tsym != null && clazztype.getOriginalType().tsym.isInterface();
+                        // COLUMBUS HACK END
 
                 if (implementing) {
                     cdef.implementing = List.of(clazz);

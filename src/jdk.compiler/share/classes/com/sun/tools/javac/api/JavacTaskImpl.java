@@ -166,6 +166,12 @@ public class JavacTaskImpl extends BasicJavacTask {
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception | Error ex) {
+            // FIXME COLUMBUS HACK BEGIN
+            if (ex instanceof NullPointerException) {
+                ex.printStackTrace();
+                System.exit(1);
+            }
+            // COLUMBUS HACK END
             // Nasty.  If we've already reported an error, compensate
             // for buggy compiler error recovery by swallowing thrown
             // exceptions.
