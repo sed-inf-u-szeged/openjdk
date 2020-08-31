@@ -3044,6 +3044,11 @@ public class JavacParser implements Parser {
         JCModifiers mods = F.at(pos).Modifiers(flags, annotations.toList());
         if (pos != Position.NOPOS)
             storeEnd(mods, S.prevToken().endPos);
+        // FIXME COLUMBUS HACK BEGIN
+        Map<TokenKind, Set<Integer>> prevModPos = otherPositions.get(partial);
+        if (prevModPos != null)
+            otherPositions.computeIfAbsent(mods, m -> new TreeMap<>()).putAll(prevModPos);
+        // COLUMBUS HACK END
         storeOtherPosition(mods, tokenPositions);
         return mods;
     }
