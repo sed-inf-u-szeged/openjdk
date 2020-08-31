@@ -357,18 +357,19 @@ public class Arguments {
         return true;
     }
 
-    private static void handleJANOptions( Iterable<String> options )
+    private static Iterable<String> handleJANOptions( Iterable<String> options )
     {
+        ListBuffer<String> newOpts = new ListBuffer<>();
         Iterator<String> iter = options.iterator();
         while ( iter.hasNext() )
         {
             String clO = iter.next();
+            boolean found = false;
             for ( JANOption janO : JANOptions.validOptions )
             {
                 if ( clO.equalsIgnoreCase(janO.name()) )
                 {
                     String mapName = janO.name().replace('-',' ').trim();
-                    iter.remove();
                     if ( ! janO.hasArgs() )
                     {
                         JANOptions.set(mapName, "true");
@@ -376,11 +377,17 @@ public class Arguments {
                     else
                     {
                         JANOptions.set(mapName, iter.next());
-                        iter.remove();
                     }
+                    found = true;
+                    break;
                 }
             }
+            if ( ! found )
+            {
+                newOpts.add( clO );
+            }
         }
+        return newOpts;
     }
 
     private boolean doProcessArgs(Iterable<String> args,
@@ -388,7 +395,7 @@ public class Arguments {
             boolean allowOperands, boolean checkFileManager) {
         JavaFileManager fm = checkFileManager ? getFileManager() : null;
 
-        handleJANOptions( args ); // FIXME COLUMBUS HACK
+        args = handleJANOptions( args ); // FIXME COLUMBUS HACK
 
         Iterator<String> argIter = args.iterator();
         while (argIter.hasNext()) {
