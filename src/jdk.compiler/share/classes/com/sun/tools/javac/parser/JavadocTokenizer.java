@@ -30,6 +30,8 @@ import com.sun.tools.javac.parser.Tokens.Comment.CommentStyle;
 import com.sun.tools.javac.util.*;
 
 import java.nio.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static com.sun.tools.javac.util.LayoutCharacters.*;
@@ -45,6 +47,18 @@ import static com.sun.tools.javac.util.LayoutCharacters.*;
  *  deletion without notice.</b>
  */
 public class JavadocTokenizer extends JavaTokenizer {
+
+    // COLUMBUS HACK BEGIN
+    /**
+     * A list for storing the comments of the current compilation unit
+     */
+    public static ArrayList<JANComment> comments = new ArrayList<JANComment>();
+
+    /**
+     * A map for storing all the comments by file
+     */
+    public static HashMap<String, ArrayList<JANComment>> commentMap = new HashMap<String, ArrayList<JANComment>>(); 
+    // COLUMBUS HACK END
 
     /** Create a scanner from the input buffer.  buffer must implement
      *  array() and compact(), and remaining() must be less than limit().
@@ -63,6 +77,20 @@ public class JavadocTokenizer extends JavaTokenizer {
     @Override
     protected Comment processComment(int pos, int endPos, CommentStyle style) {
         char[] buf = reader.getRawCharacters(pos, endPos);
+        // COLUMBUS HACK BEGIN
+        String text = new String(buf);
+        Position.LineMap lm = this.getLineMap();
+        comments.add(
+            new JANComment(
+                lm.getLineNumber(pos)
+                , lm.getColumnNumber(pos)
+                , lm.getLineNumber(endPos)
+                , lm.getColumnNumber(endPos)
+                , style
+                , text
+            )
+        );
+        // COLUMBUS HACK END
         return new JavadocComment(new DocReader(fac, buf, buf.length, pos), style);
     }
 
