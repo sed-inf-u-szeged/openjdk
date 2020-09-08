@@ -698,6 +698,7 @@ public class Symtab {
 
         PackageSymbol pack;
 
+        if (msym.visiblePackages == null) return msym.unnamedPackage; // FIXME COLUMBUS HACK
         pack = msym.visiblePackages.get(flatName);
 
         if (pack != null)

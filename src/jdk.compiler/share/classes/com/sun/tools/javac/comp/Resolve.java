@@ -335,7 +335,10 @@ public class Resolve {
                     PackageSymbol p = c.packge();
                     isAccessible =
                         currModule == p.modle ||
-                        currModule.visiblePackages.get(p.fullname) == p ||
+                        // FIXME COLUMBUS HACK BEGIN
+                        //currModule.visiblePackages.get(p.fullname) == p ||
+                        currModule.visiblePackages != null && currModule.visiblePackages.get(p.fullname) == p ||
+                        // FIXME COLUMBUS HACK END
                         p == syms.rootPackage ||
                         (p.modle == syms.unnamedModule && currModule.readModules.contains(p.modle));
                 } else {
@@ -2148,7 +2151,10 @@ public class Resolve {
         ModuleSymbol envMod = env.toplevel.modle;
         PackageSymbol symPack = sym.packge();
         return envMod == symPack.modle ||
-               envMod.visiblePackages.containsKey(symPack.fullname);
+               // FIXME COLUMBUS HACK BEGIN
+               //envMod.visiblePackages.containsKey(symPack.fullname);
+               envMod.visiblePackages != null && envMod.visiblePackages.containsKey(symPack.fullname);
+               // FIXME COLUMBUS HACK END
     }
 
     /**
@@ -4294,7 +4300,10 @@ public class Resolve {
 
     JCDiagnostic inaccessiblePackageReason(Env<AttrContext> env, PackageSymbol sym) {
         //no dependency:
-        if (!env.toplevel.modle.readModules.contains(sym.modle)) {
+        // FIXME COLUMBUS HACK BEGIN
+        //if (!env.toplevel.modle.readModules.contains(sym.modle)) {
+        if (env.toplevel.modle.readModules != null && !env.toplevel.modle.readModules.contains(sym.modle)) {
+        // FIXME COLUMBUS HACK END
             //does not read:
             if (sym.modle != syms.unnamedModule) {
                 if (env.toplevel.modle != syms.unnamedModule) {
