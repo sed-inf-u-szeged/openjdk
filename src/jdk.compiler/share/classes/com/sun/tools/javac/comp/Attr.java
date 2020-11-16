@@ -1151,6 +1151,10 @@ public class Attr extends JCTree.Visitor {
         }
 
         VarSymbol v = tree.sym;
+        // FIXME COLUMBUS HACK BEGIN
+        if (v == null)
+            return;
+        // COLUMBUS HACK END
         Lint lint = env.info.lint.augment(v);
         Lint prevLint = chk.setLint(lint);
 
