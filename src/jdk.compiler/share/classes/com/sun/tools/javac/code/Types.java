@@ -4456,6 +4456,10 @@ public class Types {
         // get a more accurate analysis
         while (commonSupers.nonEmpty()) {
             Type t1 = asSuper(from, commonSupers.head.tsym);
+            // FIXME COLUMBUS HACK BEGIN
+            if (t1 == null)
+                return false;
+            // COLUMBUS HACK END
             Type t2 = commonSupers.head; // same as asSuper(to, commonSupers.head.tsym);
             if (disjointTypes(t1.getTypeArguments(), t2.getTypeArguments()))
                 return false;
