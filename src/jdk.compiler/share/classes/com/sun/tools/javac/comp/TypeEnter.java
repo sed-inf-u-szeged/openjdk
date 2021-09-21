@@ -931,6 +931,9 @@ public class TypeEnter implements Completer {
             env.info.scope.enter(thisSym);
             // if this is a class, enter symbol for 'super' into current scope.
             if ((sym.flags_field & INTERFACE) == 0 &&
+                    // FIXME COLUMBUS HACK BEGIN
+                    ct.supertype_field != null &&
+                    // COLUMBUS HACK END
                     ct.supertype_field.hasTag(CLASS)) {
                 VarSymbol superSym =
                     new VarSymbol(FINAL | HASINIT, names._super,
